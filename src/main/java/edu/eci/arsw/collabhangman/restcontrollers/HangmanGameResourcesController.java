@@ -25,6 +25,7 @@ import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,60 +40,65 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/hangmangames")
 public class HangmanGameResourcesController {
-    
-    
+
     @Autowired
     GameServices gameServices;
-    
+
     @Autowired
     SimpMessagingTemplate msmt;
-    
+
     @RequestMapping(method = RequestMethod.GET)
-    public String test(){
+    public String test() {
         return "Ok";
     }
-    
+
     @RequestMapping(path = "/{gameid}/currentword", method = RequestMethod.GET)
-    public ResponseEntity<?> getCurrentWord(@PathVariable Integer gameid){
-        try {    
-            return new ResponseEntity<>(gameServices.getCurrentGuessedWord(gameid),HttpStatus.ACCEPTED);
+    public ResponseEntity<?> getCurrentWord(@PathVariable Integer gameid) {
+        try {
+            return new ResponseEntity<>(gameServices.getCurrentGuessedWord(gameid), HttpStatus.ACCEPTED);
         } catch (GameServicesException ex) {
-            return new ResponseEntity<>(ex.getLocalizedMessage(),HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(ex.getLocalizedMessage(), HttpStatus.NOT_FOUND);
         }
     }
-    
+
     @RequestMapping(path = "/{gameid}/letterattempts", method = RequestMethod.POST)
-    public ResponseEntity<?> tryLetterInGame(@PathVariable Integer gameid, @RequestBody HangmanLetterAttempt hga){
+    public ResponseEntity<?> tryLetterInGame(@PathVariable Integer gameid, @RequestBody HangmanLetterAttempt hga) {
         try {
-
-            String tmp =gameServices.addLetterToGame(gameid, hga.getLetter());
-            
-            LOG.log(Level.INFO, "Getting letter from client {0}:{1}", new Object[]{hga.getUsername(), hga.getLetter()});
-
-
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            if (gameServices.isGameFinished(gameid)) {
+                return new ResponseEntity<>("El juego ha terminado", HttpStatus.BAD_REQUEST);
+            } else {
+                String tmp = gameServices.addLetterToGame(gameid, hga.getLetter());
+                String topi = "/topic/wupdate." + gameid;
+                System.out.println("Enviado al topico:"+topi);
+                msmt.convertAndSend(topi, tmp);
+                LOG.log(Level.INFO, "Getting letter from client {0}:{1}", new Object[]{hga.getUsername(), hga.getLetter()});
+                return new ResponseEntity<>(HttpStatus.CREATED);
+            }
         } catch (GameServicesException ex) {
             Logger.getLogger(HangmanGameResourcesController.class.getName()).log(Level.SEVERE, null, ex);
-            return new ResponseEntity<>("No existe el juego",HttpStatus.FORBIDDEN); 
+            return new ResponseEntity<>("No existe el juego", HttpStatus.FORBIDDEN);
         }
     }
     private static final Logger LOG = Logger.getLogger(HangmanGameResourcesController.class.getName());
-    
-    @RequestMapping(path = "/{gameid}/wordattempts", method = RequestMethod.POST)
-    public ResponseEntity<?> attemptAWord(@PathVariable Integer gameid, @RequestBody HangmanWordAttempt hwa){
-        try {
 
-            boolean win=gameServices.guessWord(hwa.getUsername(),gameid, hwa.getWord());
-            
-            LOG.log(Level.INFO, "Getting word from client {0}:{1}", new Object[]{hwa.getUsername(), hwa.getWord()});
-            
-            
-            return new ResponseEntity<>(HttpStatus.CREATED);
+    @RequestMapping(path = "/{gameid}/wordattempts", method = RequestMethod.POST)
+    public ResponseEntity<?> attemptAWord(@PathVariable Integer gameid, @RequestBody HangmanWordAttempt hwa) {
+        try {
+            if (gameServices.isGameFinished(gameid)) {
+                return new ResponseEntity<>("El juego ha terminado", HttpStatus.BAD_REQUEST);
+            } else {
+                boolean win = gameServices.guessWord(hwa.getUsername(), gameid, hwa.getWord());
+                if (win) {
+                    msmt.convertAndSend("/topic/winner." + gameid, hwa.getUsername());
+                    msmt.convertAndSend("/topic/wupdate." + gameid, hwa.getWord());
+                }
+                LOG.log(Level.INFO, "Getting word from client {0}:{1}", new Object[]{hwa.getUsername(), hwa.getWord()});
+                return new ResponseEntity<>("Felicitaciones has ganado",HttpStatus.CREATED);
+            }
         } catch (GameServicesException ex) {
             Logger.getLogger(HangmanGameResourcesController.class.getName()).log(Level.SEVERE, null, ex);
-            return new ResponseEntity<>("No existe el juego",HttpStatus.FORBIDDEN); 
+            return new ResponseEntity<>("No existe el juego", HttpStatus.FORBIDDEN);
         }
     }
-        
-    
+
 }

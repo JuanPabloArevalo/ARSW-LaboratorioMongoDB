@@ -36,16 +36,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         <div class="centeredinput">
             Identificador del jugador: <input id="playerid" type="text"/><br>
-            <button onclick="">Consultar datos jugador</button>
+            <button onclick="app.getUserInformation()">Consultar datos jugador</button>
         </div>
         
         
         
         <div id="datosjugador" class="userdata">
             <div>
-                <img src="http://www.your3dsource.com/images/personsshadowthumb.jpg"/>
+                <img id="idImagenJugador" src="http://www.your3dsource.com/images/personsshadowthumb.jpg"/>
             </div>
-            <div>
+            <div id="idNombreJugador">
                 Nombre:????      
             </div>             
         </div>
@@ -62,10 +62,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         
         <div id="status">
             <div>
-                Estado: En curso
+                Estado: <a id="idEstado"> En curso</<a>.      
             </div>
             <div>
-                Ganador: Ninguno.            
+                Ganador: <a id="idGanador">Ninguno</<a>.            
             </div> 
            
             
