@@ -20,6 +20,7 @@ package edu.eci.arsw.collabhangman;
  *
  * @author hcadavid
  */
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.AbstractWebSocketMessageBrokerConfigurer;
@@ -29,10 +30,17 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
-
+    
+    @Value("${host}")
+    private String host;
+    
+    @Value("${puerto}")
+    private int puerto;
+    
     @Override
-    public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableStompBrokerRelay("/topic/").setRelayHost("192.168.56.101").setRelayPort(61613);
+    public void configureMessageBroker(MessageBrokerRegistry config) {   
+
+        config.enableStompBrokerRelay("/topic/").setRelayHost(host).setRelayPort(puerto);
         config.setApplicationDestinationPrefixes("/app");
     }
 
