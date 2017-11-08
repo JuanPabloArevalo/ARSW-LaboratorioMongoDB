@@ -116,6 +116,8 @@ public class HangmanRedisGame extends HangmanGame{
             else{
                return a; 
             }
+        }catch(RedisConnectionFailureException e){
+            throw new RedisCacheException("Se ha perdido la conexión con la base de datos");
         }catch(Exception e){
             throw new RedisCacheException(e.getMessage());
         }
