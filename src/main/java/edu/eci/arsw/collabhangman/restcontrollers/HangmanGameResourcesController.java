@@ -16,6 +16,7 @@
  */
 package edu.eci.arsw.collabhangman.restcontrollers;
 
+import edu.eci.arsw.collabhangman.cache.stub.RedisCacheException;
 import edu.eci.arsw.collabhangman.model.game.entities.HangmanLetterAttempt;
 import edu.eci.arsw.collabhangman.model.game.entities.HangmanWordAttempt;
 import edu.eci.arsw.collabhangman.services.GameServicesException;
@@ -56,7 +57,7 @@ public class HangmanGameResourcesController {
     public ResponseEntity<?> getCurrentWord(@PathVariable Integer gameid) {
         try {
             return new ResponseEntity<>(gameServices.getCurrentGuessedWord(gameid), HttpStatus.ACCEPTED);
-        } catch (GameServicesException ex) {
+        } catch (GameServicesException | RedisCacheException ex) {
             return new ResponseEntity<>(ex.getLocalizedMessage(), HttpStatus.NOT_FOUND);
         }
     }
@@ -73,10 +74,12 @@ public class HangmanGameResourcesController {
                 msmt.convertAndSend(topi, tmp);
                 LOG.log(Level.INFO, "Getting letter from client {0}:{1}", new Object[]{hga.getUsername(), hga.getLetter()});
                 return new ResponseEntity<>(HttpStatus.CREATED);
-            }
+            } 
         } catch (GameServicesException ex) {
             Logger.getLogger(HangmanGameResourcesController.class.getName()).log(Level.SEVERE, null, ex);
             return new ResponseEntity<>("No existe el juego", HttpStatus.FORBIDDEN);
+        } catch (RedisCacheException ex) {
+           return new ResponseEntity<>(ex.getLocalizedMessage(), HttpStatus.NOT_FOUND);
         }
     }
     private static final Logger LOG = Logger.getLogger(HangmanGameResourcesController.class.getName());
@@ -98,6 +101,8 @@ public class HangmanGameResourcesController {
         } catch (GameServicesException ex) {
             Logger.getLogger(HangmanGameResourcesController.class.getName()).log(Level.SEVERE, null, ex);
             return new ResponseEntity<>("No existe el juego", HttpStatus.FORBIDDEN);
+        } catch (RedisCacheException ex) {
+            return new ResponseEntity<>(ex.getLocalizedMessage(), HttpStatus.NOT_FOUND);
         }
     }
 

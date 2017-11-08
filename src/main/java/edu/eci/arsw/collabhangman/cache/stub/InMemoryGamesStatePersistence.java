@@ -28,12 +28,12 @@ import edu.eci.arsw.collabhangman.cache.GameStateCache;
  *
  * @author hcadavid
  */
-@Service
+
 public class InMemoryGamesStatePersistence implements GameStateCache{
     
     private final ConcurrentHashMap<Integer,HangmanGame> gamesState;
     
-    public InMemoryGamesStatePersistence(){
+    public InMemoryGamesStatePersistence() throws RedisCacheException{
         gamesState=new ConcurrentHashMap<>();
         preloadGames();
     }
@@ -60,7 +60,7 @@ public class InMemoryGamesStatePersistence implements GameStateCache{
         
     }
     
-    private void preloadGames(){
+    private void preloadGames() throws RedisCacheException{
         HangmanGame hg=new HangmanGame("happiness");
         hg.addLetter('h');
         hg.addLetter('e');
