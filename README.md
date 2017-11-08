@@ -102,7 +102,7 @@ NUEVA PARTE.....
 
 En este ejercicio se va a retomar la aplicación del 'ahorcado en línea':
 
-![](img/ClassDiagram.png)
+![](img/ClassDiagram2.png)
 
 Como se observó en el ejercicio anterior, esta aplicación tiene el defecto de guardar datos provisionales (el estado de los 'ahorcados') en un mapa dentro de la memoria del servidor, lo cual crea inconsistencias cuando varias instancias de la misma son montadas bajo un esquema de balanceo de carga.
 
