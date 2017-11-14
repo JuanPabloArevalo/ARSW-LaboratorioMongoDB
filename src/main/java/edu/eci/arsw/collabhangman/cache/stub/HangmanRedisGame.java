@@ -6,11 +6,12 @@
 package edu.eci.arsw.collabhangman.cache.stub;
 
 import edu.eci.arsw.collabhangman.model.game.HangmanGame;
+import java.util.List;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.RedisConnectionFailureException;
-import org.springframework.data.redis.RedisSystemException;
+import org.springframework.data.redis.core.RedisOperations;
+import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import redis.clients.jedis.exceptions.JedisConnectionException;
-import redis.clients.jedis.exceptions.JedisException;
 
 /**
  *
@@ -19,7 +20,6 @@ import redis.clients.jedis.exceptions.JedisException;
 public class HangmanRedisGame extends HangmanGame{
     public String identificadorPartida;
     private StringRedisTemplate template;
-    
     
     public HangmanRedisGame(String word, StringRedisTemplate template, String identificadorPartida) {
         super(word);
@@ -35,15 +35,26 @@ public class HangmanRedisGame extends HangmanGame{
     public HangmanRedisGame(StringRedisTemplate template, String identificadorPartida) {
         super("");
         this.identificadorPartida="game:"+identificadorPartida;
-        this.template=template;
+        this.template = template;
     }
 
     @Override
     public String addLetter(char l) throws RedisCacheException{   
+        
+//        template.execute(new SessionCallback<List< Object >>() {
+//            @Override
+//            public <K, V> List<Object> execute(RedisOperations<K, V> ro) throws DataAccessException {
+//                ro.watch((K) identificadorPartida);
+//                ro.multi();
+//                ro.opsForValue().increment( ( K )"mykey1", 5 );
+//	        ro.opsForSet().add( ( K )"mykey2", ( V )"b" );
+//                return ro.exec();
+//            }
+//        });
+        
         try{
             String wordS = (String)template.opsForHash().get(identificadorPartida, "word");
             wordS = wordS.toLowerCase();
-
             String guessedWord2 = (String)template.opsForHash().get(identificadorPartida, "guessedWord"); 
 
             this.guessedWord = new char[guessedWord2.length()];
