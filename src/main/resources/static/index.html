@@ -30,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </head>
 
 
-    
+
     <body>
         <h1 class="title">AHORCADO MULTIJUGADOR</h1>
 
@@ -38,54 +38,57 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             Identificador del jugador: <input id="playerid" type="text"/><br>
             <button onclick="app.getUserInformation()">Consultar datos jugador</button>
         </div>
-        
-        
-        
+
+
+
         <div id="datosjugador" class="userdata">
             <div>
                 <img id="idImagenJugador" src="http://www.your3dsource.com/images/personsshadowthumb.jpg"/>
             </div>
             <div id="idNombreJugador">
                 Nombre:????      
-            </div>             
+            </div>      
+            <div id="idPuntajemaximo">
+                     
+            </div>  
         </div>
 
         <div class="centeredinput">
             Identificador del Juego: <input id="gameid" type="number"/><br>
             <button onclick="app.loadWord()">Ingresar a partida</button>
         </div>
-        
-        
+
+
         <div id="palabra">
-            
+
         </div>
-        
+
         <div id="status">
             <div>
                 Estado: <a id="idEstado"> En curso</<a>.      
-            </div>
-            <div>
-                Ganador: <a id="idGanador">Ninguno</<a>.            
-            </div> 
-           
-            
-        </div>
+                        </div>
+                        <div>
+                            Ganador: <a id="idGanador">Ninguno</<a>.            
+                                    </div> 
 
 
-        <div class="box">
-            Agregar letra: <input id="caracter" type="text" maxlength="1"/>
-            <button id="bcaracter" onclick="app.sendLetter()">Enviar letra</button>
-        </div>
-        
-        
-        
-        <div class="box">
-            Adivinar palabra!: <input id="adivina" type="text"/>
-            <button id="badivina" onclick="app.sendWord()">Enviar palabra</button>
-        </div>
-        
-        
-        
-        
-    </body>
-</html>
+                                    </div>
+
+
+                                    <div class="box">
+                                        Agregar letra: <input id="caracter" type="text" maxlength="1"/>
+                                        <button id="bcaracter" onclick="app.sendLetter()">Enviar letra</button>
+                                    </div>
+
+
+
+                                    <div class="box">
+                                        Adivinar palabra!: <input id="adivina" type="text"/>
+                                        <button id="badivina" onclick="app.sendWord()">Enviar palabra</button>
+                                    </div>
+
+
+
+
+                                    </body>
+                                    </html>

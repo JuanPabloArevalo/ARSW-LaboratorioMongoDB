@@ -56,15 +56,20 @@ public class GameServices {
     
     public User loadUserData(int userid) throws GameServicesException{
         try {
-            return usersRepository.getUserByID(userid);
+            return usersRepository.findById(userid);
         } catch (PersistenceException ex) {
             throw new GameServicesException("Error loading User Data:"+ex.getLocalizedMessage(),ex);
         }
     }
     
-    public Set<User> getAllUsers(){
-        return usersRepository.getAllUsers();
+     public User getPuntajeMaximo(int userid){
+         System.out.println("ESTO:"+usersRepository.findByScoreRecent(userid).getScores().get(1));
+        return usersRepository.findByScoreRecent(userid);
     }
+    
+  /**  public Set<User> getAllUsers(){
+        return usersRepository.getAllUsers();
+    }**/
     
     /**
      * Crea un nuevo juego, con una palabra creada al azar
@@ -149,6 +154,6 @@ public class GameServices {
         return cache.getGame(gameid).getWinnerName();
     }
     
-  
+   
     
 }

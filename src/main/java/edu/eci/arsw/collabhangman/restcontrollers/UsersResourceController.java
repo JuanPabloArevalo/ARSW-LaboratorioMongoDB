@@ -5,6 +5,7 @@
  */
 package edu.eci.arsw.collabhangman.restcontrollers;
 
+import edu.eci.arsw.collabhangman.model.game.entities.User;
 import edu.eci.arsw.collabhangman.services.GameServices;
 import edu.eci.arsw.collabhangman.services.GameServicesException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,9 @@ public class UsersResourceController {
     @RequestMapping(path = "/{userId}", method = RequestMethod.GET)
     public ResponseEntity<?> getUser(@PathVariable Integer userId) {
         try {
-            return new ResponseEntity<>(gameServices.loadUserData(userId), HttpStatus.ACCEPTED);
+            User usuario = gameServices.loadUserData(userId);
+            gameServices.getPuntajeMaximo(userId);
+            return new ResponseEntity<>(usuario, HttpStatus.ACCEPTED);
         } catch (GameServicesException ex) {
             return new ResponseEntity<>(ex.getLocalizedMessage(), HttpStatus.NOT_FOUND);
         }
