@@ -2,9 +2,10 @@ var app = (function () {
 
     var nombreJugador = "NN";
     var userId;
+    var ultimoPuntaje;
     var stompClient = null;
     var gameid = 0;
-
+    var puntajeMejores = 100;
     return {
         loadWord: function () {
             gameid = $("#gameid").val();
@@ -61,9 +62,7 @@ var app = (function () {
         },
         sendWord: function () {
             var hangmanWordAttempt = {word: $("#adivina").val(), username: nombreJugador};
-
             var id = gameid;
-
             jQuery.ajax({
                 url: "/hangmangames/" + id + "/wordattempts",
                 type: "POST",
@@ -81,6 +80,22 @@ var app = (function () {
                         $("#idImagenJugador").attr("src",data.photoUrl);
                         nombreJugador = data.name;
                         $("#idNombreJugador").html("<h1>" + nombreJugador + "</h1>");
+                        ultimoPuntaje = data.scores[0].valorPuntaje;
+                        $("#idUltimoPuntaje").html("<h4> Puntaje más reciente:" + ultimoPuntaje + "</h4>");
+                    }
+            ).fail(
+                    function (data) {
+                        alert(data["responseText"]);
+                    }
+
+            );
+        },
+        getBestUsers: function () {
+            $.get("/users/score/" + puntajeMejores ,
+                    function (data) {
+                        data.map(adicionarFila);
+                        $("#idPuntajeMayorA").text(puntajeMejores);
+                        console.info(data);
                     }
             ).fail(
                     function (data) {
@@ -93,3 +108,8 @@ var app = (function () {
 
 })();
 
+
+function adicionarFila(item){
+    var markup = "<tr><td>" + item.name + "</td></tr>";
+    $("table tbody").append(markup);
+}

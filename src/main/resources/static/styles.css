@@ -48,3 +48,7 @@
    font-family: Arial, Helvetica, sans-serif;
    text-align: center;
 }
+
+th, tr {
+    text-align: center;
+}

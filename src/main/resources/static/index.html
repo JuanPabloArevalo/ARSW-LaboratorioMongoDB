@@ -18,29 +18,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <html>
     <head>
         <link rel="stylesheet" href="styles.css" type="text/css"/>
-
-        <title>TODO supply a title</title>
+        <title>Ahorcado</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="/webjars/jquery/jquery.min.js"></script>
         <script src="/webjars/sockjs-client/sockjs.min.js"></script>
         <script src="/webjars/stomp-websocket/stomp.min.js"></script>
         <script src="/app.js"></script>
-
     </head>
 
-
-
-    <body>
+    <body onload="app.getBestUsers()">
         <h1 class="title">AHORCADO MULTIJUGADOR</h1>
 
         <div class="centeredinput">
             Identificador del jugador: <input id="playerid" type="text"/><br>
             <button onclick="app.getUserInformation()">Consultar datos jugador</button>
         </div>
-
-
-
         <div id="datosjugador" class="userdata">
             <div>
                 <img id="idImagenJugador" src="http://www.your3dsource.com/images/personsshadowthumb.jpg"/>
@@ -48,47 +41,38 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <div id="idNombreJugador">
                 Nombre:????      
             </div>      
-            <div id="idPuntajemaximo">
-                     
+            <div id="idUltimoPuntaje">
+                Puntaje más reciente:      
             </div>  
         </div>
-
         <div class="centeredinput">
             Identificador del Juego: <input id="gameid" type="number"/><br>
             <button onclick="app.loadWord()">Ingresar a partida</button>
         </div>
-
-
         <div id="palabra">
-
         </div>
-
         <div id="status">
             <div>
                 Estado: <a id="idEstado"> En curso</<a>.      
-                        </div>
-                        <div>
-                            Ganador: <a id="idGanador">Ninguno</<a>.            
-                                    </div> 
-
-
-                                    </div>
-
-
-                                    <div class="box">
-                                        Agregar letra: <input id="caracter" type="text" maxlength="1"/>
-                                        <button id="bcaracter" onclick="app.sendLetter()">Enviar letra</button>
-                                    </div>
-
-
-
-                                    <div class="box">
-                                        Adivinar palabra!: <input id="adivina" type="text"/>
-                                        <button id="badivina" onclick="app.sendWord()">Enviar palabra</button>
-                                    </div>
-
-
-
-
-                                    </body>
-                                    </html>
+            </div>
+            <div>
+                Ganador: <a id="idGanador">Ninguno</<a>.            
+            </div> 
+        </div>
+        <div class="box">
+            Agregar letra: <input id="caracter" type="text" maxlength="1"/>
+            <button id="bcaracter" onclick="app.sendLetter()">Enviar letra</button>
+        </div>
+        <div class="box">
+            Adivinar palabra!: <input id="adivina" type="text"/>
+            <button id="badivina" onclick="app.sendWord()">Enviar palabra</button>
+        </div>
+        <div class="box">
+            <h4 class="title">Usuarios con puntaje mayor a: <a id="idPuntajeMayorA"></<a></h4>
+            <table style="width:100%" class="table">
+                <tr>
+                </tr>
+            </table> 
+        </div>
+    </body>
+</html>

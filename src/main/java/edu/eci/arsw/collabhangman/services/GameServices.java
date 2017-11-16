@@ -62,14 +62,13 @@ public class GameServices {
         }
     }
     
-     public User getPuntajeMaximo(int userid){
-         System.out.println("ESTO:"+usersRepository.findByScoreRecent(userid).getScores().get(1));
+     public User getPuntajeMaximo(int userid) throws PersistenceException{
         return usersRepository.findByScoreRecent(userid);
     }
     
-  /**  public Set<User> getAllUsers(){
-        return usersRepository.getAllUsers();
-    }**/
+    public Set<User> getUsersWithScoreMoreThan(int score) throws PersistenceException{
+        return usersRepository.findByScoreGreaterThan(score);
+    }
     
     /**
      * Crea un nuevo juego, con una palabra creada al azar

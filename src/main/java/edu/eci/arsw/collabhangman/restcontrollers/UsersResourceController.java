@@ -6,8 +6,11 @@
 package edu.eci.arsw.collabhangman.restcontrollers;
 
 import edu.eci.arsw.collabhangman.model.game.entities.User;
+import edu.eci.arsw.collabhangman.persistence.PersistenceException;
 import edu.eci.arsw.collabhangman.services.GameServices;
 import edu.eci.arsw.collabhangman.services.GameServicesException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,10 +33,19 @@ public class UsersResourceController {
     @RequestMapping(path = "/{userId}", method = RequestMethod.GET)
     public ResponseEntity<?> getUser(@PathVariable Integer userId) {
         try {
-            User usuario = gameServices.loadUserData(userId);
-            gameServices.getPuntajeMaximo(userId);
-            return new ResponseEntity<>(usuario, HttpStatus.ACCEPTED);
-        } catch (GameServicesException ex) {
+//            User usuario = gameServices.loadUserData(userId);
+            return new ResponseEntity<>(gameServices.getPuntajeMaximo(userId), HttpStatus.ACCEPTED);
+        } catch (PersistenceException ex) {
+            return new ResponseEntity<>(ex.getLocalizedMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+    
+    @RequestMapping(path = "/score/{score}", method = RequestMethod.GET)
+    public ResponseEntity<?> getUserWithScoreMoreThan(@PathVariable Integer score) {
+        try {
+            return new ResponseEntity<>(gameServices.getUsersWithScoreMoreThan(score), HttpStatus.ACCEPTED);
+        } catch (PersistenceException ex) {
+            Logger.getLogger(UsersResourceController.class.getName()).log(Level.SEVERE, null, ex);
             return new ResponseEntity<>(ex.getLocalizedMessage(), HttpStatus.NOT_FOUND);
         }
     }

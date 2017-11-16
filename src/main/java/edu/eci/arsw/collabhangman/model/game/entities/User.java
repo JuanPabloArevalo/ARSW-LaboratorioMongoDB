@@ -23,14 +23,12 @@ public class User {
     private String name;
     private String photoUrl;
     private List<Score> scores;
-    private long puntajeMaximo;
     
     public User(int id, String name, String photoUrl) {
         this.id = id;
         this.name = name;
         this.photoUrl = photoUrl;
         this.scores = new ArrayList<>();
-        this.puntajeMaximo = 0;
     }
 
     public User() {
@@ -72,20 +70,6 @@ public class User {
      */
     public void setScores(List<Score> scores) {
         this.scores = scores;
-    }
-
-    /**
-     * @return the puntajeMaximo
-     */
-    public long getPuntajeMaximo() {
-        return puntajeMaximo;
-    }
-
-    /**
-     * @param puntajeMaximo the puntajeMaximo to set
-     */
-    public void setPuntajeMaximo(long puntajeMaximo) {
-        this.puntajeMaximo = puntajeMaximo;
     }
     
     

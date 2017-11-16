@@ -22,11 +22,11 @@ public interface UsersRepository extends MongoRepository<User, Integer>{
     
     
 
-//    @Query("{\"scores\": {\"$elemMatch\": {\"valorPuntaje\": {\"$gt\": ?0 }}}")
-//    public Set<User> findByScoreGreaterThan(int score);
+    @Query("{\"scores\": {\"$elemMatch\": {\"valorPuntaje\": {\"$gt\": ?0 }}}}")
+    public Set<User> findByScoreGreaterThan(int score) throws PersistenceException;
     
-    @Query("{\"_id\": ?0},{\"scores\":{\"$slice\":-1}}")
-    public User findByScoreRecent(int id);
+    @Query(value="{\"_id\": ?0}" , fields="{\"scores\":{\"$slice\":-1}}")
+    public User findByScoreRecent(int id) throws PersistenceException;
     
     
     
