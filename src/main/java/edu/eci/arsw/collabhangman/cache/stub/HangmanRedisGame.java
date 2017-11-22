@@ -53,22 +53,6 @@ public class HangmanRedisGame extends HangmanGame {
         this.identificadorPartida = "game:" + identificadorPartida;
         this.template = template;
     }
-
-//    
-//    @Autowired
-//    RedisScript<String> script = null;
-//    
-//    @Bean
-//    public RedisScript<String> script() {
-//        System.out.println ("1");
-//        DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
-//        System.out.println ("2");
-//        redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("/script.lua")));
-//        System.out.println ("3");
-//        redisScript.setResultType(String.class);
-//        System.out.println ("4");
-//        return redisScript;
-//    }
     
 
     @Override
@@ -119,27 +103,61 @@ public class HangmanRedisGame extends HangmanGame {
 
     @Override
     public boolean tryWord(String playerName, String s) throws RedisCacheException {
+        System.out.println("Aca:"+gameFinished);
+        System.out.println("S:"+s);
         try {
             String wordS = (String) template.opsForHash().get(identificadorPartida, "word");
+            System.out.println("wordS:"+wordS);
             if (s.toLowerCase().equals(wordS)) {
-                winner = playerName;
-                gameFinished = true;
-                guessedWord = wordS.toCharArray();
-                template.opsForHash().put(identificadorPartida, "winner", playerName);
-                template.opsForHash().put(identificadorPartida, "gameFinished", "S");
-                template.opsForHash().put(identificadorPartida, "guessedWord", s);
+            
+                List<Object> res=template.execute( new SessionCallback< List< Object > >() {
+                    @SuppressWarnings("unchecked")
+                    @Override
+                    public< K, V > List<Object> execute( final RedisOperations< K, V > operations )throws DataAccessException {
+                        operations.watch((K)identificadorPartida);
+                        operations.multi();                         
+                        operations.opsForHash().put((K)identificadorPartida, "winner", playerName);
+                        operations.opsForHash().put((K)identificadorPartida, "gameFinished", "S");
+                        operations.opsForHash().put((K)identificadorPartida, "guessedWord", s);
+                        List<Object> l = operations.exec();
+                        //System.out.println("l:"+l); 
+                        return l;
+                    }
+                } );
+                
+                System.out.println("res"+res);
                 return true;
             }
-            return false;
+            else{
+               return false; 
+            }
         } catch (RedisConnectionFailureException e) {
             throw new RedisCacheException("Se ha perdido la conexión con la base de datos");
         }
+        
+//        try {
+//            String wordS = (String) template.opsForHash().get(identificadorPartida, "word");
+//            System.out.println("wordS:"+wordS);
+//            if (s.toLowerCase().equals(wordS)) {
+//                winner = playerName;
+//                gameFinished = true;
+//                guessedWord = wordS.toCharArray();
+//                template.opsForHash().put(identificadorPartida, "winner", playerName);
+//                template.opsForHash().put(identificadorPartida, "gameFinished", "S");
+//                template.opsForHash().put(identificadorPartida, "guessedWord", s);
+//                return true;
+//            }
+//            return false;
+//        } catch (RedisConnectionFailureException e) {
+//            throw new RedisCacheException("Se ha perdido la conexión con la base de datos");
+//        }
     }
 
     @Override
     public boolean gameFinished() throws RedisCacheException {
         try {
             String finalizado = (String) template.opsForHash().get(identificadorPartida, "gameFinished");
+             System.out.println("finalizado:"+finalizado);
             return "S".equalsIgnoreCase(finalizado);
         } catch (RedisConnectionFailureException e) {
             throw new RedisCacheException("Se ha perdido la conexión con la base de datos");

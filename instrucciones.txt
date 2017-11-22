@@ -1,0 +1,11 @@
+Para el correcto funcionamiento se deben tener las siguientes llaves en redis:
+
+game:1 winner ""
+game:1 word "happiness"
+game:1 gameFinished "N" ("N" si no ha finalizado, "S" si ya finalizo)
+game:1 guessedWord "h________"
+
+
+(El número 1 es el identificador del juego)
+
+

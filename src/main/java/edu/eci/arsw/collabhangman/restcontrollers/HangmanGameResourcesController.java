@@ -91,12 +91,18 @@ public class HangmanGameResourcesController {
                 return new ResponseEntity<>("El juego ha terminado", HttpStatus.BAD_REQUEST);
             } else {
                 boolean win = gameServices.guessWord(hwa.getUsername(), gameid, hwa.getWord());
+                System.out.println("Y ahora ACA: win: "+win);
                 if (win) {
                     msmt.convertAndSend("/topic/winner." + gameid, hwa.getUsername());
                     msmt.convertAndSend("/topic/wupdate." + gameid, hwa.getWord());
+                    LOG.log(Level.INFO, "Getting word from client {0}:{1}", new Object[]{hwa.getUsername(), hwa.getWord()});
+                    return new ResponseEntity<>("Felicitaciones has ganado",HttpStatus.CREATED);
                 }
-                LOG.log(Level.INFO, "Getting word from client {0}:{1}", new Object[]{hwa.getUsername(), hwa.getWord()});
-                return new ResponseEntity<>("Felicitaciones has ganado",HttpStatus.CREATED);
+                else{
+                    LOG.log(Level.INFO, "Getting word from client {0}:{1}", new Object[]{hwa.getUsername(), hwa.getWord()});
+                    return new ResponseEntity<>("Fallaste!!.",HttpStatus.CREATED);
+                }
+                
             }
         } catch (GameServicesException ex) {
             Logger.getLogger(HangmanGameResourcesController.class.getName()).log(Level.SEVERE, null, ex);
